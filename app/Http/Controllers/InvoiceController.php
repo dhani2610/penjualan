@@ -60,6 +60,7 @@ class InvoiceController extends Controller
                     'pembuat' => 'nullable|numeric',
                     'status' => 'nullable',
                     'keterangan' => 'required',
+                    'no_inv' => 'required',
                 ]);
         
                 $data = [
@@ -67,6 +68,7 @@ class InvoiceController extends Controller
                     'pembuat' => $this->guard()->user()->id,
                     'status' => 'Draft',
                     'keterangan' => $request->input('keterangan'),
+                    'no_inv' => 'NO-INV-'.rand(),
                 ];
     
                 Invoice::create($data);
@@ -113,6 +115,7 @@ class InvoiceController extends Controller
                     'pembuat' => 'nullable|numeric',
                     'status' => 'nullable',
                     'keterangan' => 'required',
+                    'no_inv' => 'required',
                 ]);
         
                 $data = [
@@ -120,6 +123,7 @@ class InvoiceController extends Controller
                     'pembuat' => $this->guard()->user()->id,
                     'status' => 'Pending Invoice',
                     'keterangan' => $request->input('keterangan'),
+                    'no_inv' => 'NO-INV-'.rand(),
                 ];
     
                 Invoice::create($data);
@@ -187,6 +191,7 @@ class InvoiceController extends Controller
 
     public function update(Request $request,$id)
     {
+        
         try {
 
             $this->validate($request, [
@@ -256,6 +261,7 @@ class InvoiceController extends Controller
         $Customer = Customer::where('id',$Pemesanan->id_customer)->first();
         $produk = Produk::where('id',$Pemesanan->id_produk)->first();
         $dataInvoice = [
+            'no_inv' =>  $data->no_inv,
             'no_qt' => $Pemesanan->no_qt,
             'nama_customer' => $Customer->nama_customer,
             'alamat_customer' => $Customer->alamat,

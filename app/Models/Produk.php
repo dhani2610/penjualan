@@ -15,4 +15,10 @@ class Produk extends Model
     {
         return $this->hasMany(Pemesanan::class);
     }
+
+       
+    public function kategori()
+    {
+        return $this->belongsTo(KategoriProduk::class);
+    }
 }

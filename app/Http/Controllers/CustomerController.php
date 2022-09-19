@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
+use App\Models\Pemesanan;
 use Illuminate\Http\Request;
 
 class CustomerController extends Controller
@@ -22,6 +23,33 @@ class CustomerController extends Controller
         ]);
     }
 
+    public function storeKategori(Request $request)
+    {
+        dd($request->all());
+        try {
+            $this->validate($request, [
+                'nama_kategori' => 'required',
+              
+            ]);
+    
+            $data = New Customer();
+            if ($request->input('nama_kategori') != "") {
+                $data->nama_kategori = $request->input('nama_kategori');
+            }
+          
+            $data->save();
+
+            return response()->json([
+                'msg' => 'Berhasil Simpan Data Kategori Produk',
+                'data' => $data
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'msg' => 'Gagal  Simpan Data Kategori Produk',
+                'error' =>  $th->getMessage(),
+            ]);
+        }
+    }
     public function store(Request $request)
     {
         try {
@@ -71,37 +99,28 @@ class CustomerController extends Controller
 
     public function update(Request $request, $id)
     {
-        try {
-            $this->validate($request, [
-                'nama_customer' => 'required',
-                'no_tlp' => 'required|numeric',
-                'email' => 'required|string|email|max:100|unique:customers',
-                'alamat' => 'required',
-            ]);
-    
-            $data =  Customer::find($id);
-            if ($request->input('nama_customer') != "") {
-                $data->nama_customer = $request->input('nama_customer');
-            }
-            if ($request->input('no_tlp') != "") {
-                $data->no_tlp = $request->input('no_tlp');
-            }
-            if ($request->input('email') != "") {
-                $data->email = $request->input('email');
-            }
-            if ($request->input('alamat') != "") {
-                $data->alamat = $request->input('alamat');
-            }
-            $data->save();
+        $this->validate($request, [
+            'nama_customer' => 'required',
+            'no_tlp' => 'required|numeric',
+            'email' => 'required|string|email|max:100|unique:customers',
+            'alamat' => 'required',
+        ]);
+        $data =  Customer::find($id);
+        if  ($data) {
+            $data->nama_customer = $request->input('nama_customer');
+            $data->no_tlp = $request->input('no_tlp');
+            $data->email = $request->input('email');
+            $data->alamat = $request->input('alamat');
+            $data->update();
 
             return response()->json([
                 'msg' => 'Berhasil Edit Data Customer',
                 'data' => $data
             ]);
-        } catch (\Throwable $th) {
+        }else {
             return response()->json([
                 'msg' => 'Gagal Edit Data Customer',
-                'error' =>  $th->getMessage()
+               
             ]);
         }
   
@@ -111,13 +130,20 @@ class CustomerController extends Controller
     public function destroy($id)
     {
         $data = Customer::find($id);
+        $checkquo = Pemesanan::where('id_customer',$id)->first();
         try {
-            $data->delete();
-            
-            return response()->json([
-                'msg' => 'Berhasil Hapus Customer',
-                'data' => $data
-            ]);
+            if ($checkquo == null) {
+                $data->delete();
+                
+                return response()->json([
+                    'msg' => 'Berhasil Hapus Customer',
+                    'data' => $data
+                ]);
+            }else {
+                return response()->json([
+                    'msg' => 'Upss Data Sudah Digunakan',
+                ]);
+            }
         } catch (\Throwable $th) {
             return response()->json([
                 'msg' => 'Gagal Hapus Customer',

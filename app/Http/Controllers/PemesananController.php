@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
+use App\Models\Invoice;
 use App\Models\Pemesanan;
 use App\Models\Produk;
 use Illuminate\Http\Request;
@@ -206,37 +207,29 @@ class PemesananController extends Controller
 
     public function update(Request $request,$id)
     {
-        try {
-            $this->validate($request, [
-                'id_customer' => 'required|numeric',
-                'id_produk' => 'required|numeric',
-                'qty' => 'required|numeric',
-                'total' => 'nullable|numeric',
-            ]);
-    
-            $produk = Produk::where('id',$request->input('id_produk'))->first();
-            $data =  Pemesanan::find($id);
-            if ($request->input('id_customer') != "") {
-                $data->id_customer = $request->input('id_customer');
-            }
-            if ($request->input('id_produk') != "") {
-                $data->id_produk = $request->input('id_produk');
-            }
-            if ($request->input('qty') != "") {
-                $data->qty = $request->input('qty');
-            }
+        $this->validate($request, [
+            'id_customer' => 'required|numeric',
+            'id_produk' => 'required|numeric',
+            'qty' => 'required|numeric',
+            'total' => 'nullable|numeric',
+        ]);
+
+        $data =  Pemesanan::find($id);
+        $produk = Produk::where('id',$request->input('id_produk'))->first();
+        if  ($data) {
+            $data->id_customer = $request->input('id_customer');
+            $data->id_produk = $request->input('id_produk');
+            $data->qty = $request->input('qty');
             $data->total = $request->input('qty') * $produk->harga;
-           
-            $data->save();
+            $data->update();
 
             return response()->json([
-                'msg' => 'Berhasil Simpan Pemesanan',
+                'msg' => 'Berhasil Edit Data Pemesanan',
                 'data' => $data
             ]);
-        } catch (\Throwable $th) {
+        }else {
             return response()->json([
-                'msg' => 'Gagal Simpan Pemesanan',
-                'eror' =>  $th->getMessage(),
+                'msg' => 'Gagal Edit Data Pemesanan',
             ]);
         }
     }
@@ -272,14 +265,21 @@ class PemesananController extends Controller
  
     public function destroy($id)
     {
+        $data = Pemesanan::find($id);
+        $check = Invoice::where('id_quo',$id)->first();
         try {
-            $data = Pemesanan::find($id);
-            $data->delete();
-
-            return response()->json([
-                'msg' => 'Behasil Hapus Pemesanan',
-                'data' => $data
-            ]);
+            if ( $check == null) {
+                $data->delete();
+    
+                return response()->json([
+                    'msg' => 'Behasil Hapus Pemesanan',
+                    'data' => $data
+                ]);
+            }else {
+                return response()->json([
+                    'msg' => 'Upss Data Sudah Digunakan',
+                ]);
+            }
         } catch (\Throwable $th) {
             return response()->json([
                 'msg' => 'Gagal Hapus Pemesanan',

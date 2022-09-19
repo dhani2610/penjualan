@@ -6,7 +6,6 @@ use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\KategoriProdukController;
 use App\Http\Controllers\PemesananController;
 use App\Http\Controllers\ProdukController;
-use App\Models\Invoice;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'auth', 'middleware' => 'api'], function () {
@@ -25,7 +24,7 @@ Route::group(['prefix' => 'auth', 'middleware' => 'api'], function () {
     
     //Kategori Produk
     Route::get('get-kategori-produk', [KategoriProdukController::class, 'index']);
-    Route::get('tambah-kategori-produk', [KategoriProdukController::class, 'store']);
+    Route::post('add-kategori', [KategoriProdukController::class, 'store']);
     Route::post('get-edit-kategori-produk/{id}', [KategoriProdukController::class, 'edit']);
     Route::post('edit-kategori-produk/{id}', [KategoriProdukController::class, 'update']);
     Route::post('hapus-kategori-produk/{id}', [KategoriProdukController::class, 'destroy']);
@@ -36,7 +35,7 @@ Route::group(['prefix' => 'auth', 'middleware' => 'api'], function () {
     Route::post('get-edit-produk/{id}', [ProdukController::class, 'edit']);
     Route::post('edit-produk/{id}', [ProdukController::class, 'update']);
     Route::post('hapus-produk/{id}', [ProdukController::class, 'destroy']);
-
+    
     //Quotation
     Route::get('get-pemesanan', [PemesananController::class, 'index']);
     Route::post('tambah-pemesanan-draft', [PemesananController::class, 'storeDraft']);
