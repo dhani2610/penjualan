@@ -112,7 +112,7 @@ class PemesananController extends Controller
     public function storeSaved(Request $request)
     {
         $update = Pemesanan::where('status','Draft')->where('pembuat',$this->guard()->user()->id)->first();
-        $produk = Produk::where('id',$request->input('nama_produk'))->first();
+        $produk = Produk::where('id',$request->input('id_produk'))->first();
 
         if ($request->input('status') == 'Draft') {
             try {
@@ -141,7 +141,7 @@ class PemesananController extends Controller
                     'id_customer' => 'required|numeric',
                     'id_produk' => 'required|numeric',
                     'qty' => 'required|numeric',
-                    'total' => 'nullable|numeric',
+                    'total' => 'nullable',
                     'status' => 'nullable',
                     'pembuat' => 'nullable',
                 ]);

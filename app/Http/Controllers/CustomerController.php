@@ -23,33 +23,6 @@ class CustomerController extends Controller
         ]);
     }
 
-    public function storeKategori(Request $request)
-    {
-        dd($request->all());
-        try {
-            $this->validate($request, [
-                'nama_kategori' => 'required',
-              
-            ]);
-    
-            $data = New Customer();
-            if ($request->input('nama_kategori') != "") {
-                $data->nama_kategori = $request->input('nama_kategori');
-            }
-          
-            $data->save();
-
-            return response()->json([
-                'msg' => 'Berhasil Simpan Data Kategori Produk',
-                'data' => $data
-            ]);
-        } catch (\Throwable $th) {
-            return response()->json([
-                'msg' => 'Gagal  Simpan Data Kategori Produk',
-                'error' =>  $th->getMessage(),
-            ]);
-        }
-    }
     public function store(Request $request)
     {
         try {
@@ -97,14 +70,8 @@ class CustomerController extends Controller
         ]);
     }
 
-    public function update(Request $request, $id)
+    public function updateCus(Request $request,$id)
     {
-        $this->validate($request, [
-            'nama_customer' => 'required',
-            'no_tlp' => 'required|numeric',
-            'email' => 'required|string|email|max:100|unique:customers',
-            'alamat' => 'required',
-        ]);
         $data =  Customer::find($id);
         if  ($data) {
             $data->nama_customer = $request->input('nama_customer');
@@ -120,12 +87,9 @@ class CustomerController extends Controller
         }else {
             return response()->json([
                 'msg' => 'Gagal Edit Data Customer',
-               
             ]);
         }
-  
     }
-
 
     public function destroy($id)
     {

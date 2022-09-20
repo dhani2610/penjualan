@@ -19,8 +19,8 @@ Route::group(['prefix' => 'auth', 'middleware' => 'api'], function () {
     Route::get('get-customer', [CustomerController::class, 'index']);
     Route::post('tambah-customer', [CustomerController::class, 'store']);
     Route::post('get-edit-customer/{id}', [CustomerController::class, 'edit']);
-    Route::post('edit-customer/{id}', [CustomerController::class, 'update']);
     Route::post('hapus-customer/{id}', [CustomerController::class, 'destroy']);
+    Route::post('update-customer/{id}',[CustomerController::class,'updateCus']);
     
     //Kategori Produk
     Route::get('get-kategori-produk', [KategoriProdukController::class, 'index']);
@@ -49,9 +49,9 @@ Route::group(['prefix' => 'auth', 'middleware' => 'api'], function () {
 
     // Invoice
     Route::get('get-invoice', [InvoiceController::class, 'index']);
-    Route::get('tambah-invoice-draft',[InvoiceController::class, 'storeDraftInvoice']);
+    Route::post('tambah-invoice-draft',[InvoiceController::class, 'storeDraftInvoice']);
     Route::get('get-draft-invoice', [InvoiceController::class, 'getDraft']);
-    Route::get('tambah-invoice-saved',[InvoiceController::class, 'storeSavedInvoice']); 
+    Route::post('tambah-invoice-saved',[InvoiceController::class, 'storeSavedInvoice']); 
     Route::post('kirim-invoice/{id}',[InvoiceController::class, 'sendInvoice']); 
     Route::post('get-edit-invoice/{id}', [InvoiceController::class, 'edit']);
     Route::post('edit-invoice/{id}',[InvoiceController::class, 'update']); 

@@ -54,42 +54,32 @@ class InvoiceController extends Controller
                 ]);
             }
         }else{
-            try {
-                $this->validate($request, [ 
-                    'id_quo' => 'required||numeric',
-                    'pembuat' => 'nullable|numeric',
-                    'status' => 'nullable',
-                    'keterangan' => 'required',
-                    'no_inv' => 'required',
-                ]);
-        
-                $data = [
-                    'id_quo' => $request->input('id_quo'),
-                    'pembuat' => $this->guard()->user()->id,
-                    'status' => 'Draft',
-                    'keterangan' => $request->input('keterangan'),
-                    'no_inv' => 'NO-INV-'.rand(),
-                ];
-    
-                Invoice::create($data);
-    
+            $data = Invoice::create([
+                'id_quo' => $request->input('id_quo'),
+                'pembuat' => $this->guard()->user()->id,
+                'status' => 'Draft',
+                'keterangan' => $request->input('keterangan'),
+                'no_inv' => 'NO-INV-'.rand(),
+            ]);
+            if ($data) {
                 return response()->json([
                     'msg' => 'Berhasil Draft Invoice',
                     'data' => $data
                 ]);
-            } catch (\Throwable $th) {
+            }else {
                 return response()->json([
                     'msg' => 'Gagal Draft Invoice',
-                    'error' =>  $th->getMessage(),
+                    'error' =>  $data,
                 ]);
             }
+       
         }
     }
 
     public function storeSavedInvoice(Request $request)
     {
         $update = Invoice::where('status','Draft')->where('pembuat',$this->guard()->user()->id)->first();
-
+        // dd( $request->input('status') == 'Draft');
         if ($request->input('status') == 'Draft'){
             try {
                 $update->update([
@@ -109,33 +99,24 @@ class InvoiceController extends Controller
                 ]);
             }
         }else {
-            try {
-                $this->validate($request, [ 
-                    'id_quo' => 'required||numeric',
-                    'pembuat' => 'nullable|numeric',
-                    'status' => 'nullable',
-                    'keterangan' => 'required',
-                    'no_inv' => 'required',
-                ]);
-        
-                $data = [
-                    'id_quo' => $request->input('id_quo'),
-                    'pembuat' => $this->guard()->user()->id,
-                    'status' => 'Pending Invoice',
-                    'keterangan' => $request->input('keterangan'),
-                    'no_inv' => 'NO-INV-'.rand(),
-                ];
-    
-                Invoice::create($data);
-    
+            $data = [
+                'id_quo' => $request->input('id_quo'),
+                'pembuat' => $this->guard()->user()->id,
+                'status' => 'Pending Invoice',
+                'keterangan' => $request->input('keterangan'),
+                'no_inv' => 'NO-INV-'.rand(),
+            ];
+
+            $check = Invoice::create($data);
+
+            if ($check) {
                 return response()->json([
-                    'msg' => 'Berhasil Draft Invoice',
+                    'msg' => 'Berhasil Saved Invoice',
                     'data' => $data
                 ]);
-            } catch (\Throwable $th) {
+            }else {
                 return response()->json([
                     'msg' => 'Gagal Draft Invoice',
-                    'error' =>  $th->getMessage(),
                 ]);
             }
         }

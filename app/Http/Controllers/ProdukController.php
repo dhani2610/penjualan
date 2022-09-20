@@ -12,11 +12,7 @@ Use File;
 
 class ProdukController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function __construct()
     {
         $this->middleware('auth:api', ['except' => ['login', 'register']]);
@@ -154,25 +150,19 @@ class ProdukController extends Controller
 
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Produk  $produk
-     * @return \Illuminate\Http\Response
-     */
     function destroy($id)
     {
         $data = Produk::find($id);
         $check = Pemesanan::where('id_produk',$id)->first();
         try {
             if ($check == null) {
-                $data->delete();
                 if ($data->img) {
                     $image_path = public_path('img-produk/'.$data->img); // Value is not URL but directory file path
                     if (File::exists($image_path)) {
                         File::delete($image_path);
                     }
                 }
+                $data->delete();
                 return response()->json([
                     'msg' => 'Berhasil Hapus Produk',
                 ]);
@@ -189,11 +179,6 @@ class ProdukController extends Controller
         }
     }
 
-    /**
-     * Get the guard to be used during authentication.
-     *
-     * @return \Illuminate\Contracts\Auth\Guard
-     */
     public function guard()
     {
         return Auth::guard('api');

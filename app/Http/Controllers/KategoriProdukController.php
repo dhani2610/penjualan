@@ -9,11 +9,7 @@ use Illuminate\Http\Request;
 
 class KategoriProdukController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function __construct()
     {
         $this->middleware('auth:api', ['except' => ['login', 'register']]);
@@ -94,17 +90,18 @@ class KategoriProdukController extends Controller
         $data = KategoriProduk::find($id);
         $checkProd = Produk::where('kategori_produk',$id)->first();
         try {
-            if ($checkProd == null) {
+            // if ($checkProd == null) {
                 $data->delete();
                 
                 return response()->json([
                     'msg' => 'Berhasil Hapus Kategori Produk',
+                    'data' => $data
                 ]);
-            }else {
-                return response()->json([
-                    'msg' => 'Upss Data Sudah Digunakan',
-                ]);
-            }
+            // }else {
+            //     return response()->json([
+            //         'msg' => 'Upss Data Sudah Digunakan',
+            //     ]);
+            // }
         } catch (\Throwable $th) {
             return response()->json([
                 'msg' => 'Gagal Hapus Kategori Produk',
