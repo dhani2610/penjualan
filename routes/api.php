@@ -2,8 +2,10 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\ImportController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\KategoriProdukController;
+use App\Http\Controllers\MerekController;
 use App\Http\Controllers\PemesananController;
 use App\Http\Controllers\ProdukController;
 use Illuminate\Support\Facades\Route;
@@ -21,6 +23,13 @@ Route::group(['prefix' => 'auth', 'middleware' => 'api'], function () {
     Route::post('get-edit-customer/{id}', [CustomerController::class, 'edit']);
     Route::post('hapus-customer/{id}', [CustomerController::class, 'destroy']);
     Route::post('update-customer/{id}',[CustomerController::class,'updateCus']);
+
+    // Merek
+    Route::get('get-merek', [MerekController::class, 'index']);
+    Route::post('tambah-merek', [MerekController::class, 'store']);
+    Route::post('get-edit-merek/{id}', [MerekController::class, 'edit']);
+    Route::post('edit-merek/{id}',[MerekController::class,'update']);
+    Route::post('hapus-merek/{id}', [MerekController::class, 'destroy']);
     
     //Kategori Produk
     Route::get('get-kategori-produk', [KategoriProdukController::class, 'index']);
@@ -60,5 +69,18 @@ Route::group(['prefix' => 'auth', 'middleware' => 'api'], function () {
 
     // Invoice Payment
     Route::post('invoice-payment/{id}',[InvoiceController::class, 'payment']); 
+
+    // Import Customer
+    Route::post('import-customer',[ImportController::class, 'importCustomer']); 
+
+    // Import Kategori Produk
+    Route::post('import-kategori-produk',[ImportController::class, 'importKategoriProduk']); 
+
+    // Import Merek
+    Route::post('import-merek',[ImportController::class, 'importMerek']); 
+
+    // Import Produk
+    Route::post('import-produk',[ImportController::class, 'importProduk']); 
+
 });
 

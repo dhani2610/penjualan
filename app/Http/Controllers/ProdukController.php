@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\KategoriProduk;
+use App\Models\Merek;
 use App\Models\Pemesanan;
 use App\Models\Produk;
 use Illuminate\Http\Request;
@@ -18,14 +19,30 @@ class ProdukController extends Controller
         $this->middleware('auth:api', ['except' => ['login', 'register']]);
     }
 
-
     public function index()
     {
-        $data = Produk::get();
-       
+        $array['prod'] = [];
+        foreach (Produk::all() as $prod) {
+            $dprod = [];
+            $checkStok = Pemesanan::where('id_produk',optional($prod)->id)->get()->sum('qty');
+            $merek = Merek::where('id',optional($prod)->id_merek)->first();
+            $dprod['id'] = optional($prod)->id;
+            $dprod['nama_produk'] = optional($prod)->nama_produk;
+            $dprod['kategori_produk'] = optional($prod)->kategori_produk;
+            $dprod['harga'] = optional($prod)->harga ;
+            $dprod['id_merek'] = optional($prod)->id_merek;
+            $dprod['nama_merek'] = $merek->nama_merek;
+            $dprod['stok'] = optional($prod)->stok - $checkStok;
+            $dprod['img'] = optional($prod)->img;
+            $dprod['nama_kategori'] = optional($prod)->nama_kategori;
+            $dprod['created_at'] = optional($prod)->created_at;
+            $dprod['updated_at'] = optional($prod)->update_at;
+            array_push($array['prod'], $dprod);
+        }
+
         return response()->json([
             'msg' => 'Berhasil',
-            'data' => $data,
+            'data' => $array['prod'],
             'url' => 'http://192.168.1.239/Api-Auth/public/img-produk/'
         ]);
     }

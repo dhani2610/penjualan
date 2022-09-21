@@ -8,6 +8,7 @@ use App\Models\Pemesanan;
 use App\Models\Produk;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use PDF;
 
 class InvoiceController extends Controller
 {
@@ -241,26 +242,28 @@ class InvoiceController extends Controller
         $Pemesanan = Pemesanan::find($data->id_quo);
         $Customer = Customer::where('id',$Pemesanan->id_customer)->first();
         $produk = Produk::where('id',$Pemesanan->id_produk)->first();
-        $dataInvoice = [
+         $dataInvoice = [
             'no_inv' =>  $data->no_inv,
+            'nama_perusahaan' =>  $this->guard()->user()->nama_perusahaan,
             'no_qt' => $Pemesanan->no_qt,
             'nama_customer' => $Customer->nama_customer,
             'alamat_customer' => $Customer->alamat,
             'nama_produk' => $produk->nama_produk,
+            'harga' => $produk->harga,
             'qty' => $Pemesanan->qty,
             'total_harga' => $Pemesanan->total,
             'status' => $data->status,
             'pembuat' => $data->pembuat,
-            'keterangan' =>  $data->keterangan
+            'keterangan' =>  $data->keterangan,
+            'tanggal_order' => $Pemesanan->created_at,
+            'email_addres' => $Customer->email,
+            'no_tlp' => $Customer->no_tlp,
         ];
 
-        return response()->json([
-            'msg' => 'Berhasil Show Detail',
-            'data' => $dataInvoice
-        ]);
-    }
-    
-  
+        $pdf = PDF::loadView('invoice.pdf', $dataInvoice);
 
+        return $pdf->download('Invoice.pdf');
+        
+    }
 
 }

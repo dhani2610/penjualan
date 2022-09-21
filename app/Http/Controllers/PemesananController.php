@@ -25,9 +25,28 @@ class PemesananController extends Controller
     public function index()
     {
         $data = Pemesanan::get();
+        $array['quo'] = [];
+        foreach (Pemesanan::all() as $quo) {
+            $dquo = [];
+            $customer = Customer::where('id',optional($quo)->id_customer)->first();
+            $produk = Produk::where('id',optional($quo)->id_produk)->first();
+            $dquo['id'] = optional($quo)->id;
+            $dquo['no_qt'] = optional($quo)->no_qt;
+            $dquo['id_customer'] = optional($quo)->id_customer;
+            $dquo['nama_customer'] = $customer->nama_customer;
+            $dquo['id_produk'] = optional($quo)->id_produk ;
+            $dquo['nama_produk'] = $produk->nama_produk ;
+            $dquo['qty'] = optional($quo)->qty;
+            $dquo['total'] = optional($quo)->total;
+            $dquo['pembuat'] = optional($quo)->pembuat;
+            $dquo['status'] = optional($quo)->status;
+            $dquo['created_at'] = optional($quo)->created_at;
+            $dquo['updated_at'] = optional($quo)->update_at;
+            array_push($array['quo'], $dquo);
+        }
         return response()->json([
             'msg' => 'Berhasil',
-            'data' => $data
+            'data' => $array['quo']
         ]);
     }
 
@@ -35,6 +54,7 @@ class PemesananController extends Controller
     {
         $update = Pemesanan::where('status','Draft')->where('pembuat',$this->guard()->user()->id)->first();
         $produk = Produk::where('id',$request->input('id_produk'))->first();
+        // $checkStok = Pemesanan::where('id_produk',$request->input('id_produk'))->get()->sum('qty');
         
         if ($request->input('status') == 'Draft') {
             try {
@@ -140,7 +160,7 @@ class PemesananController extends Controller
                     'no_qt' => 'nullable',
                     'id_customer' => 'required|numeric',
                     'id_produk' => 'required|numeric',
-                    'qty' => 'required|numeric',
+                    'qty' => 'required',
                     'total' => 'nullable',
                     'status' => 'nullable',
                     'pembuat' => 'nullable',
