@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\KategoriProduk;
 use App\Models\Merek;
+use App\Models\Notifikasi;
 use App\Models\Pemesanan;
 use App\Models\Produk;
 use Illuminate\Http\Request;
@@ -86,8 +87,15 @@ class ProdukController extends Controller
                 $image->move($destinationPath, $name);
                 $data->img = $name;
             }
-
             $data->save();
+
+            $newNotifikasi = new Notifikasi();
+            $newNotifikasi->judul = 'Berhasil Menambah Produk';
+            $newNotifikasi->deskripsi = 'Anda Berhasil Menambahkan Produk '.$request->input('nama_produk');
+            $newNotifikasi->datetime = date('Y-m-d H:i:s');
+            $newNotifikasi->pembuat =  $this->guard()->user()->id;
+            $newNotifikasi->from =  'Produk';
+            $newNotifikasi->save();
 
             return response()->json([
                 'msg' => 'Berhasil Simpan Data Produk',
@@ -154,6 +162,14 @@ class ProdukController extends Controller
             }
             $data->update();
 
+            $newNotifikasi = new Notifikasi();
+            $newNotifikasi->judul = 'Berhasil Edit Produk';
+            $newNotifikasi->deskripsi = 'Anda Berhasil Mengedit Produk '.$data->nama_produk;
+            $newNotifikasi->datetime = date('Y-m-d H:i:s');
+            $newNotifikasi->pembuat =  $this->guard()->user()->id;
+            $newNotifikasi->from =  'Produk';
+            $newNotifikasi->save();
+
             return response()->json([
                 'msg' => 'Berhasil Edit Data Invoice',
                 'data' => $data,
@@ -180,6 +196,15 @@ class ProdukController extends Controller
                     }
                 }
                 $data->delete();
+
+                $newNotifikasi = new Notifikasi();
+                $newNotifikasi->judul = 'Berhasil Hapus Quotation';
+                $newNotifikasi->deskripsi = 'Anda Berhasil Hapus Quotation '.$data->nama_merek;
+                $newNotifikasi->datetime = date('Y-m-d H:i:s');
+                $newNotifikasi->pembuat =  $this->guard()->user()->id;
+                $newNotifikasi->from =  'Produk';
+                $newNotifikasi->save();
+
                 return response()->json([
                     'msg' => 'Berhasil Hapus Produk',
                 ]);

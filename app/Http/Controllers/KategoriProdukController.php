@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\KategoriProduk;
+use App\Models\Notifikasi;
 use App\Models\Produk;
 use GuzzleHttp\Promise\Create;
 use Illuminate\Http\Request;
@@ -40,7 +41,14 @@ class KategoriProdukController extends Controller
                 $data->nama_kategori = $request->input('nama_kategori');
             }
             $data->save();
-
+            
+            $newNotifikasi = new Notifikasi();
+            $newNotifikasi->judul = 'Berhasil Menambah Kategori Produk';
+            $newNotifikasi->deskripsi = 'Anda Berhasil Menambahkan Kategori Produk '.$request->input('nama_kategori');
+            $newNotifikasi->datetime = date('Y-m-d H:i:s');
+            $newNotifikasi->pembuat =  $this->guard()->user()->id;
+            $newNotifikasi->from =  'Kategori Produk';
+            $newNotifikasi->save();
 
             return response()->json([
                 'msg' => 'Berhasil Simpan Data Kategori Produk',
@@ -73,6 +81,14 @@ class KategoriProdukController extends Controller
         if  ($data) {
             $data->nama_kategori = $request->input('nama_kategori');
             $data->update();
+            
+            $newNotifikasi = new Notifikasi();
+            $newNotifikasi->judul = 'Berhasil Edit Kategori Produk';
+            $newNotifikasi->deskripsi = 'Anda Berhasil Mengedit Kategori Produk '.$data->nama_kategori;
+            $newNotifikasi->datetime = date('Y-m-d H:i:s');
+            $newNotifikasi->pembuat =  $this->guard()->user()->id;
+            $newNotifikasi->from =  'Kategori Produk';
+            $newNotifikasi->save();
 
             return response()->json([
                 'msg' => 'Berhasil Edit Data Kategori Produk',
@@ -90,18 +106,26 @@ class KategoriProdukController extends Controller
         $data = KategoriProduk::find($id);
         $checkProd = Produk::where('kategori_produk',$id)->first();
         try {
-            // if ($checkProd == null) {
+            if ($checkProd == null) {
                 $data->delete();
                 
+                $newNotifikasi = new Notifikasi();
+                $newNotifikasi->judul = 'Berhasil Hapus Kategori Produk';
+                $newNotifikasi->deskripsi = 'Anda Berhasil Hapus Kategori Produk '.$data->nama_kategori;
+                $newNotifikasi->datetime = date('Y-m-d H:i:s');
+                $newNotifikasi->pembuat =  $this->guard()->user()->id;
+                $newNotifikasi->from =  'Kategori Produk';
+                $newNotifikasi->save();
+
                 return response()->json([
                     'msg' => 'Berhasil Hapus Kategori Produk',
                     'data' => $data
                 ]);
-            // }else {
-            //     return response()->json([
-            //         'msg' => 'Upss Data Sudah Digunakan',
-            //     ]);
-            // }
+            }else {
+                return response()->json([
+                    'msg' => 'Upss Data Sudah Digunakan',
+                ]);
+            }
         } catch (\Throwable $th) {
             return response()->json([
                 'msg' => 'Gagal Hapus Kategori Produk',

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Merek;
+use App\Models\Notifikasi;
 use App\Models\Produk;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -42,6 +43,14 @@ class MerekController extends Controller
             }
             $data->save();
 
+            $newNotifikasi = new Notifikasi();
+            $newNotifikasi->judul = 'Berhasil Menambah Merek';
+            $newNotifikasi->deskripsi = 'Anda Berhasil Menambahkan Merek '.$request->input('nama_merek');
+            $newNotifikasi->datetime = date('Y-m-d H:i:s');
+            $newNotifikasi->pembuat =  $this->guard()->user()->id;
+            $newNotifikasi->from = 'Merek';
+            $newNotifikasi->save();
+
             return response()->json([
                 'msg' => 'Berhasil Simpan Data Merek',
                 'data' => $data
@@ -76,6 +85,14 @@ class MerekController extends Controller
             }
             $data->save();
 
+            $newNotifikasi = new Notifikasi();
+            $newNotifikasi->judul = 'Berhasil Edit Merek';
+            $newNotifikasi->deskripsi = 'Anda Berhasil Mengedit Merek '.$request->input('nama_merek');
+            $newNotifikasi->datetime = date('Y-m-d H:i:s');
+            $newNotifikasi->pembuat =  $this->guard()->user()->id;
+            $newNotifikasi->from = 'Merek';
+            $newNotifikasi->save();
+
             return response()->json([
                 'msg' => 'Berhasil Edit Data Merek',
                 'data' => $data
@@ -96,6 +113,14 @@ class MerekController extends Controller
             if ($checkquo == null) {
                 $data->delete();
                 
+                $newNotifikasi = new Notifikasi();
+                $newNotifikasi->judul = 'Berhasil Hapus Merek';
+                $newNotifikasi->deskripsi = 'Anda Berhasil Hapus Merek '.$data->nama_merek;
+                $newNotifikasi->datetime = date('Y-m-d H:i:s');
+                $newNotifikasi->pembuat =  $this->guard()->user()->id;
+                $newNotifikasi->from = 'Merek';
+                $newNotifikasi->save();
+
                 return response()->json([
                     'msg' => 'Berhasil Hapus Merek',
                     'data' => $data

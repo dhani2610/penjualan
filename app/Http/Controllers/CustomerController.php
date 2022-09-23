@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
+use App\Models\Notifikasi;
 use App\Models\Pemesanan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CustomerController extends Controller
 {
@@ -14,6 +16,11 @@ class CustomerController extends Controller
         $this->middleware('auth:api', ['except' => ['login', 'register']]);
     }
  
+    public function guard()
+    {
+        return Auth::guard('api');
+    }
+    
     public function index()
     {
         $data = Customer::get();
@@ -34,6 +41,7 @@ class CustomerController extends Controller
             ]);
     
             $data = New Customer();
+            // $data = Customer::create($request->all());
             if ($request->input('nama_customer') != "") {
                 $data->nama_customer = $request->input('nama_customer');
             }
@@ -48,14 +56,23 @@ class CustomerController extends Controller
             }
             $data->save();
 
+
+            $newNotifikasi = new Notifikasi();
+            $newNotifikasi->judul = 'Berhasil Menambah Customer';
+            $newNotifikasi->deskripsi = 'Anda Berhasil Menambahkan Customer '.$request->input('nama_customer');
+            $newNotifikasi->datetime = date('Y-m-d H:i:s');
+            $newNotifikasi->pembuat =  $this->guard()->user()->id;
+            $newNotifikasi->from = 'Customer';
+            $newNotifikasi->save();
+
             return response()->json([
                 'msg' => 'Berhasil Simpan Data Customer',
                 'data' => $data
             ]);
         } catch (\Throwable $th) {
             return response()->json([
-                'msg' => 'Gagal  Simpan Data Customer',
-                'eror' =>  $th->getMessage(),
+                'msg' => 'Gagal Simpan Data Customer',
+                'error' =>  $th->getMessage(),
             ]);
         }
     }
@@ -80,6 +97,14 @@ class CustomerController extends Controller
             $data->alamat = $request->input('alamat');
             $data->update();
 
+            $newNotifikasi = new Notifikasi();
+            $newNotifikasi->judul = 'Berhasil Edit Customer';
+            $newNotifikasi->deskripsi = 'Anda Berhasil Mengedit Customer '.$data->nama_customer;
+            $newNotifikasi->datetime = date('Y-m-d H:i:s');
+            $newNotifikasi->pembuat =  $this->guard()->user()->id;
+            $newNotifikasi->from = 'Customer';
+            $newNotifikasi->save();
+
             return response()->json([
                 'msg' => 'Berhasil Edit Data Customer',
                 'data' => $data
@@ -99,6 +124,14 @@ class CustomerController extends Controller
             if ($checkquo == null) {
                 $data->delete();
                 
+                $newNotifikasi = new Notifikasi();
+                $newNotifikasi->judul = 'Berhasil Hapus Customer';
+                $newNotifikasi->deskripsi = 'Anda Berhasil Hapus Customer '.$data->nama_customer;
+                $newNotifikasi->datetime = date('Y-m-d H:i:s');
+                $newNotifikasi->pembuat =  $this->guard()->user()->id;
+                $newNotifikasi->from = 'Customer';
+                $newNotifikasi->save();
+
                 return response()->json([
                     'msg' => 'Berhasil Hapus Customer',
                     'data' => $data

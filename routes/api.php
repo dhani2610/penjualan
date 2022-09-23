@@ -2,12 +2,16 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\ExportController;
 use App\Http\Controllers\ImportController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\KategoriProdukController;
+use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\MerekController;
+use App\Http\Controllers\NotifikasiController;
 use App\Http\Controllers\PemesananController;
 use App\Http\Controllers\ProdukController;
+use App\Models\Notifikasi;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'auth', 'middleware' => 'api'], function () {
@@ -66,6 +70,7 @@ Route::group(['prefix' => 'auth', 'middleware' => 'api'], function () {
     Route::post('edit-invoice/{id}',[InvoiceController::class, 'update']); 
     Route::post('hapus-invoice/{id}',[InvoiceController::class, 'destroy']); 
     Route::post('generate-invoice/{id}',[InvoiceController::class, 'generateInvoice']); 
+    Route::post('detail-invoice/{id}',[InvoiceController::class, 'detail']); 
 
     // Invoice Payment
     Route::post('invoice-payment/{id}',[InvoiceController::class, 'payment']); 
@@ -82,5 +87,27 @@ Route::group(['prefix' => 'auth', 'middleware' => 'api'], function () {
     // Import Produk
     Route::post('import-produk',[ImportController::class, 'importProduk']); 
 
+    // Notifikasi
+    Route::get('notifikasi',[NotifikasiController::class, 'index']); 
+    Route::post('detail-notifikasi/{id}',[NotifikasiController::class, 'detail']); 
+    Route::post('hapus-notifikasi/{id}',[NotifikasiController::class, 'destroy']); 
+    
+    // Export Customer
+    Route::get('export-customer',[ExportController::class, 'exportCustomer']); 
+    // Export Kategori Produk
+    Route::get('export-kategori-produk',[ExportController::class, 'exportKategoriProduk']); 
+    // Export Customer
+    Route::get('export-kategori-produk',[ExportController::class, 'exportKategoriProduk']); 
+    // Export Merek
+    Route::get('export-merek',[ExportController::class, 'exportMerek']); 
+    // Export Produk
+    Route::get('export-produk',[ExportController::class, 'exportProduk']); 
+    // Export Quotation
+    Route::get('export-quotation',[ExportController::class, 'exportQuotation']); 
+    // Export Invoice
+    Route::get('export-invoice',[ExportController::class, 'exportInvoice']); 
+
+    // Laporan
+    Route::get('get-laporan',[LaporanController::class, 'getlaporan']);
 });
 

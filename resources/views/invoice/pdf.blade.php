@@ -120,6 +120,7 @@
 
         <div class="body-section">
             <h3 class="heading">Order List</h3>
+            <p class="heading" style="font-size: 15px"><b>NO Quotation : {{ $no_qt }}</b></p>
             <br>
             <table class="table-bordered">
                 <thead>
